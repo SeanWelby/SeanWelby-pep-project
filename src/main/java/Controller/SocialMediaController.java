@@ -1,5 +1,10 @@
 package Controller;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import Model.Account;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -14,9 +19,15 @@ public class SocialMediaController {
      * suite must receive a Javalin object from this method.
      * @return a Javalin app object which defines the behavior of the Javalin controller.
      */
+    private final ObjectMapper mapper = new ObjectMapper();
+
     public Javalin startAPI() {
         Javalin app = Javalin.create();
         app.get("example-endpoint", this::exampleHandler);
+        app.post("/register", this::postRegisterHandler);
+        app.post("/login", this::postLoginHandler);
+    
+        app.start(8080);
 
         return app;
     }
@@ -28,6 +39,34 @@ public class SocialMediaController {
     private void exampleHandler(Context context) {
         context.json("sample text");
     }
+    
+    // Register Handler
+    private void postRegisterHandler(Context context) throws IOException {
+        Account account = mapper.readValue(context.body(), Account.class);        
 
+        if(account.getUsername().isEmpty() || account.getPassword().length() < 4 || accountExists(account.getUsername())){
+            context.status(400).json("Invalid registration details");
+            return;
+        }
+        
+        account.setAccount_id(1);
+        context.status(200).json(account);
+    }
+    // Helper Method to check if account exists
+    private boolean accountExists(String username) {
+        return false;
+    }
 
+    // Login Handler
+    private void postLoginHandler(Context context) throws IOException{
+        Account account = mapper.readValue(context.body(), Account.class);
+
+        if(accountExists(account.getUsername()) || accountExists(account.getPassword())){
+            context.status(401).json("Unauthorized Login");
+            return;
+        }
+
+        context.status(201).json(account);
+
+    }
 }
