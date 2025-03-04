@@ -42,31 +42,11 @@ public class SocialMediaController {
     
     // Register Handler
     private void postRegisterHandler(Context context) throws IOException {
-        Account account = mapper.readValue(context.body(), Account.class);        
-
-        if(account.getUsername().isEmpty() || account.getPassword().length() < 4 || accountExists(account.getUsername())){
-            context.status(400).json("Invalid registration details");
-            return;
-        }
-        
-        account.setAccount_id(1);
-        context.status(200).json(account);
-    }
-    // Helper Method to check if account exists
-    private boolean accountExists(String username) {
-        return false;
+    
     }
 
     // Login Handler
     private void postLoginHandler(Context context) throws IOException{
-        Account account = mapper.readValue(context.body(), Account.class);
-
-        if(accountExists(account.getUsername()) || accountExists(account.getPassword())){
-            context.status(401).json("Unauthorized Login");
-            return;
-        }
-
-        context.status(201).json(account);
-
+        
     }
 }
