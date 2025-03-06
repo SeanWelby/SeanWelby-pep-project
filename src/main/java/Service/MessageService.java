@@ -7,42 +7,46 @@ import java.util.List;
 public class MessageService {
     private MessageDAO messageDAO;
 
+    public MessageService(){
+        messageDAO = new MessageDAO();
+    }
     public MessageService(MessageDAO messageDAO){
         this.messageDAO = messageDAO;
-    }
-
-    public Message createMessage(Message message) {
-        if(message.getMessage_text().isBlank() || message.getMessage_text().length() > 255) {
-            return null;
-        }
-        return messageDAO.createMessage(message);
     }
 
     public List<Message> getAllMessages(){
         return messageDAO.getAllMessages();
     }
 
-    public Message getMessageById(int messageID){
-        return messageDAO.getMessageByID(messageID);
+    public List<Message> getAllMessagesByAccountId(int account_id){
+        return messageDAO.getAllMessagesByAccountId(account_id);
     }
 
-    public boolean deleteMessage(int messageID){
-        return messageDAO.deleteMessage(messageID);
+    public Message getMessageById(int message_id){
+        return messageDAO.getMessageById(message_id);
     }
 
-    public Message updateMessage(int messageID, String newMessage){
-        if(newMessage.isBlank() || newMessage.length() > 255){
-            return null;
-        }
-        Message message = messageDAO.getMessageByID(messageID);
+    public Message addMessage(Message message){
         if(message == null){
             return null;
         }
-        message.setMessage_text(newMessage);
-        return messageDAO.updateMessage(message.getMessage_id(), newMessage);
+        Message persisMessage = messageDAO.addMessage(message);
+
+        return persisMessage;
     }
-    
-    public List<Message> getMessagesByUser(int accountID){
-        return messageDAO.getMessageByUser(accountID);
+
+    public Message updateMessage(int message_id, Message message){
+        Message updateMessage = messageDAO.getMessageById(message_id);
+
+        if(updateMessage == null){
+            return null;
+        }else{
+            updateMessage.setMessage_text(message.getMessage_text());
+            return updateMessage;
+        }
+    }
+
+    public boolean deleteMessage(int message_id){
+        return messageDAO.deleteMessage(message_id);
     }
 }
